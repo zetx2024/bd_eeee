@@ -1,0 +1,94 @@
+/* --- CSS PRELOADER HACK --- */
+/* Forces the browser to download sponsor logos immediately on page load */
+#wc-logo-animate::before {
+  content: "";
+  position: absolute;
+  width: 0; 
+  height: 0;
+  visibility: hidden;
+  overflow: hidden;
+  z-index: -1;
+  /* Loading all 3 sponsor images at once */
+  background-image: 
+    url('https://cdn.savemyexams.com/logo/sme-logo-3line.svg'),
+    url('https://yrjournal.org/images/Logo.PNG'),
+    url('https://upload.wikimedia.org/wikipedia/commons/5/52/Domainme.png');
+}
+
+
+/* ==========================================
+   3D ROTATING BILLBOARD LOGO & SPONSORS
+   (100% Pure CSS - No HTML Changes Required)
+   ========================================== */
+
+/* Main container: Fixed exact size */
+#wc-logo-animate {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px !important;
+  height: 50px !important;
+  text-decoration: none;
+  transform-style: preserve-3d; /* Enables the 3D flip effect */
+  perspective: 400px;
+}
+
+/* 1. Main Logo (Your original brand logo from HTML) */
+#wc-logo-animate img {
+  position: absolute;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain;
+  opacity: 0;
+  animation: flip-main-logo 16s infinite;
+  will-change: transform, opacity;
+}
+
+/* 2. The 3 Sponsors (Handled creatively by a single CSS pseudo-element) */
+#wc-logo-animate::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  animation: flip-sponsors 16s infinite;
+  will-change: transform, opacity, background-image;
+}
+
+/* --- ANIMATION TIMELINES (16-Second Loop) --- */
+
+/* Main Logo Cycle (Shows for the first 4 seconds) */
+@keyframes flip-main-logo {
+  0%   { transform: rotateX(90deg); opacity: 0; }
+  4%   { transform: rotateX(0deg); opacity: 1; filter: drop-shadow(0 0 4px rgba(255,255,255,0.4)); }
+  21%  { transform: rotateX(0deg); opacity: 1; filter: drop-shadow(0 0 4px rgba(255,255,255,0.4)); }
+  25%  { transform: rotateX(-90deg); opacity: 0; }
+  26%, 100% { opacity: 0; transform: rotateX(-90deg); } /* Stays hidden while sponsors show */
+}
+
+/* Sponsors Cycle (Shows sequentially for the next 12 seconds) */
+@keyframes flip-sponsors {
+  /* Stay hidden while Main Logo is showing (0% to 24%) */
+  0%, 24% { opacity: 0; transform: rotateX(90deg); }
+
+  /* Sponsor 1: Save My Exams (25% to 50%) */
+  25% { background-image: url('https://cdn.savemyexams.com/logo/sme-logo-3line.svg'); transform: rotateX(90deg); opacity: 0; }
+  29% { background-image: url('https://cdn.savemyexams.com/logo/sme-logo-3line.svg'); transform: rotateX(0deg); opacity: 1; }
+  46% { background-image: url('https://cdn.savemyexams.com/logo/sme-logo-3line.svg'); transform: rotateX(0deg); opacity: 1; }
+  50% { background-image: url('https://cdn.savemyexams.com/logo/sme-logo-3line.svg'); transform: rotateX(-90deg); opacity: 0; }
+
+  /* Sponsor 2: YRJ (50% to 75%) */
+  51% { background-image: url('https://yrjournal.org/images/Logo.PNG'); transform: rotateX(90deg); opacity: 0; }
+  54% { background-image: url('https://yrjournal.org/images/Logo.PNG'); transform: rotateX(0deg); opacity: 1; }
+  71% { background-image: url('https://yrjournal.org/images/Logo.PNG'); transform: rotateX(0deg); opacity: 1; }
+  75% { background-image: url('https://yrjournal.org/images/Logo.PNG'); transform: rotateX(-90deg); opacity: 0; }
+
+  /* Sponsor 3: Domain.me (75% to 100%) */
+  76% { background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/52/Domainme.png'); transform: rotateX(90deg); opacity: 0; }
+  80% { background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/52/Domainme.png'); transform: rotateX(0deg); opacity: 1; }
+  96% { background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/52/Domainme.png'); transform: rotateX(0deg); opacity: 1; }
+  100%{ background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/52/Domainme.png'); transform: rotateX(-90deg); opacity: 0; }
+}
