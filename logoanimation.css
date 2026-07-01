@@ -1,24 +1,6 @@
-/* --- CSS PRELOADER HACK --- */
-/* Forces the browser to download sponsor logos immediately on page load */
-#wc-logo-animate::before {
-  content: "";
-  position: absolute;
-  width: 0; 
-  height: 0;
-  visibility: hidden;
-  overflow: hidden;
-  z-index: -1;
-  /* Loading all 3 sponsor images at once */
-  background-image: 
-    url('https://cdn.savemyexams.com/logo/sme-logo-3line.svg'),
-    url('https://yrjournal.org/images/Logo.PNG'),
-    url('https://upload.wikimedia.org/wikipedia/commons/5/52/Domainme.png');
-}
-
-
 /* ==========================================
-   3D ROTATING BILLBOARD LOGO & SPONSORS
-   (100% Pure CSS - No HTML Changes Required)
+   GALAXY ORBIT & ZOOM HIGHLIGHT ANIMATION
+   (100% Pure CSS - No HTML Changes)
    ========================================== */
 
 /* Main container: Fixed exact size */
@@ -29,66 +11,126 @@
   justify-content: center;
   width: 80px !important;
   height: 50px !important;
+  overflow: visible !important; /* CRITICAL: Allows the galaxy ring to expand outside */
   text-decoration: none;
-  transform-style: preserve-3d; /* Enables the 3D flip effect */
-  perspective: 400px;
+  transform-style: preserve-3d; 
 }
 
-/* 1. Main Logo (Your original brand logo from HTML) */
-#wc-logo-animate img {
-  position: absolute;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain;
-  opacity: 0;
-  animation: flip-main-logo 16s infinite;
-  will-change: transform, opacity;
-}
-
-/* 2. The 3 Sponsors (Handled creatively by a single CSS pseudo-element) */
+/* --- 1. CSS PRELOADER (Instant Cache) --- */
 #wc-logo-animate::after {
   content: "";
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-size: contain;
-  background-position: center;
+  width: 0; height: 0;
+  visibility: hidden;
+  z-index: -1;
+  /* Loads images secretly before animation needs them */
+  background-image: 
+    url('https://cdn.savemyexams.com/logo/sme-logo-3line.svg'), 
+    url('https://yrjournal.org/images/Logo.PNG'), 
+    url('https://upload.wikimedia.org/wikipedia/commons/5/52/Domainme.png');
+}
+
+/* --- 2. THE GALAXY RING (Sponsors Orbit) --- */
+#wc-logo-animate::before {
+  content: "";
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 220px;  /* Diameter of the orbit */
+  height: 220px;
+  margin-top: -110px;
+  margin-left: -110px;
+  border-radius: 50%;
+  border: 1px dashed rgba(200, 200, 200, 0.3); /* The visual orbit track */
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1) inset;
+  z-index: 1;
+  pointer-events: none; /* Prevents the invisible ring from blocking navbar clicks */
+
+  /* The 3 Sponsor Logos plotted around the ring */
+  background-image:
+    url('https://cdn.savemyexams.com/logo/sme-logo-3line.svg'),
+    url('https://yrjournal.org/images/Logo.PNG'),
+    url('https://upload.wikimedia.org/wikipedia/commons/5/52/Domainme.png');
+  background-size: 55px auto, 45px auto, 50px auto;
   background-repeat: no-repeat;
-  opacity: 0;
-  animation: flip-sponsors 16s infinite;
-  will-change: transform, opacity, background-image;
+  
+  /* Positioning perfectly at 0deg, 120deg, and 240deg to form a triangle */
+  background-position: 
+    50% 0%,       /* Top */
+    93% 75%,      /* Bottom Right */
+    7% 75%;       /* Bottom Left */
+
+  animation: galaxy-orbit-loop 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform, opacity;
 }
 
-/* --- ANIMATION TIMELINES (16-Second Loop) --- */
-
-/* Main Logo Cycle (Shows for the first 4 seconds) */
-@keyframes flip-main-logo {
-  0%   { transform: rotateX(90deg); opacity: 0; }
-  4%   { transform: rotateX(0deg); opacity: 1; filter: drop-shadow(0 0 4px rgba(255,255,255,0.4)); }
-  21%  { transform: rotateX(0deg); opacity: 1; filter: drop-shadow(0 0 4px rgba(255,255,255,0.4)); }
-  25%  { transform: rotateX(-90deg); opacity: 0; }
-  26%, 100% { opacity: 0; transform: rotateX(-90deg); } /* Stays hidden while sponsors show */
+/* --- 3. THE MAIN LOGO (Blink & Zoom) --- */
+#wc-logo-animate img {
+  position: relative;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain;
+  z-index: 2;
+  animation: main-logo-action 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform, opacity, filter;
 }
 
-/* Sponsors Cycle (Shows sequentially for the next 12 seconds) */
-@keyframes flip-sponsors {
-  /* Stay hidden while Main Logo is showing (0% to 24%) */
-  0%, 24% { opacity: 0; transform: rotateX(90deg); }
+/* ==========================================
+   ANIMATION TIMELINES (12-Second Loop)
+   ========================================== */
 
-  /* Sponsor 1: Save My Exams (25% to 50%) */
-  25% { background-image: url('https://cdn.savemyexams.com/logo/sme-logo-3line.svg'); transform: rotateX(90deg); opacity: 0; }
-  29% { background-image: url('https://cdn.savemyexams.com/logo/sme-logo-3line.svg'); transform: rotateX(0deg); opacity: 1; }
-  46% { background-image: url('https://cdn.savemyexams.com/logo/sme-logo-3line.svg'); transform: rotateX(0deg); opacity: 1; }
-  50% { background-image: url('https://cdn.savemyexams.com/logo/sme-logo-3line.svg'); transform: rotateX(-90deg); opacity: 0; }
+/* Galaxy Orbit Timeline */
+@keyframes galaxy-orbit-loop {
+  /* 0% to 50%: 3D Orbiting Phase */
+  0% { 
+    opacity: 0; 
+    transform: rotateX(70deg) rotateZ(0deg) scale(0.6); 
+  }
+  10% { 
+    opacity: 1; 
+    transform: rotateX(70deg) rotateZ(45deg) scale(1); 
+  }
+  45% { 
+    opacity: 1; 
+    transform: rotateX(70deg) rotateZ(315deg) scale(1); 
+  }
+  50% { 
+    opacity: 0; 
+    transform: rotateX(70deg) rotateZ(360deg) scale(0.6); 
+  }
+  /* 50% to 100%: Hidden while Main Logo takes the stage */
+  100% { 
+    opacity: 0; 
+    transform: rotateX(70deg) rotateZ(360deg) scale(0.6); 
+  }
+}
 
-  /* Sponsor 2: YRJ (50% to 75%) */
-  51% { background-image: url('https://yrjournal.org/images/Logo.PNG'); transform: rotateX(90deg); opacity: 0; }
-  54% { background-image: url('https://yrjournal.org/images/Logo.PNG'); transform: rotateX(0deg); opacity: 1; }
-  71% { background-image: url('https://yrjournal.org/images/Logo.PNG'); transform: rotateX(0deg); opacity: 1; }
-  75% { background-image: url('https://yrjournal.org/images/Logo.PNG'); transform: rotateX(-90deg); opacity: 0; }
+/* Main Logo Blink & Zoom Timeline */
+@keyframes main-logo-action {
+  /* 0% to 50%: Normal state while galaxy spins */
+  0%, 50% { 
+    transform: scale(1); 
+    opacity: 1; 
+    filter: drop-shadow(0 0 3px rgba(255,255,255,0.3)); 
+  }
+  
+  /* 52% to 58%: Double Blink Effect */
+  52% { opacity: 0; }
+  54% { opacity: 1; filter: drop-shadow(0 0 10px rgba(255,255,255,0.9)); }
+  56% { opacity: 0; }
+  58% { opacity: 1; }
 
-  /* Sponsor 3: Domain.me (75% to 100%) */
-  76% { background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/52/Domainme.png'); transform: rotateX(90deg); opacity: 0; }
-  80% { background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/52/Domainme.png'); transform: rotateX(0deg); opacity: 1; }
-  96% { background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/52/Domainme.png'); transform: rotateX(0deg); opacity: 1; }
-  100%{ background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/52/Domainme.png'); transform: rotateX(-90deg); opacity: 0; }
+  /* 60% to 85%: Smooth Zoom-in & Highlight */
+  60% { 
+    transform: scale(1); 
+  }
+  75% { 
+    transform: scale(1.4); /* Zooms 40% larger */
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7)); /* Golden highlight */
+  }
+  
+  /* 85% to 100%: Revert to normal for the next loop */
+  90%, 100% { 
+    transform: scale(1); 
+    filter: drop-shadow(0 0 3px rgba(255,255,255,0.3)); 
+  }
 }
